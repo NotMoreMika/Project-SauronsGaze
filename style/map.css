@@ -7,22 +7,32 @@
 
 body {
   margin: 0;
+  overflow-x: auto;
+  min-width: 320px;
+  padding: 1rem;
 }
 
 /* General Style*/
 @font-face {
-  font-family: outfit;
-  src: url("../src/fonts/outfit/Outfit-VariableFont_wght.ttf");
+  font-family: "Outfit";
+  src: url("../src/fonts/outfit/Outfit-VariableFont_wght.ttf")
+    format("truetype");
+  font-display: swap;
 }
 @font-face {
   font-family: noto-emoji;
-  src: url("../src/fonts/Noto_Emoji/NotoEmoji-VariableFont_wght.ttf");
+  src: url("../src/fonts/Noto_Color_Emoji/NotoColorEmoji-Regular.ttf")
+    format("truetype");
 }
 :root {
-  --red-castle-color: #ff7675;
-  --blue-castle-color: #74b9ff;
-  --green-castle-color: #2ecc71;
-  --yellow-castle-color: #fdcb6e;
+  --color-castle-red: #ff7675;
+  --color-castle-blue: #74b9ff;
+  --color-castle-green: #2ecc71;
+  --color-castle-yellow: #fdcb6e;
+  --color-neutral-zone: #dfe6e9;
+  --tile-size: clamp(80px, 12vmin, 200px);
+  --gap-size: 2px;
+  --border-radius: 4px;
 }
 
 body {
@@ -42,54 +52,119 @@ div {
 }
 
 .map {
-  width: 90vw;
-  margin-left: auto;
-  margin-right: auto;
-  overflow: scroll;
+  --columns: 19;
   display: grid;
-  /* flex-direction: column; */
-  grid-template-columns: repeat(19, 200px);
-  grid-template-rows: repeat(19, 200px);
-  gap: 2px;
+  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+  gap: var(--gap-size);
+  max-width: calc(var(--tile-size) * var(--columns));
+  min-width: calc(var(--tile-size) * 19 + (19 - 1) * var(--gap-size));
+  margin: 1rem auto;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.map::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
 }
 
 .tile {
-  border: 3px solid rgba(0, 0, 0, 0.3);
+  aspect-ratio: 1;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  border: 3px solid rgba(0, 0, 0, 0.3);
+  border-radius: var(--border-radius);
+  background: white;
+  transition: transform 0.2s ease, filter 0.3s ease;
 }
 
-.recurse {
-  order: 1;
+.resource {
+  font-family: "noto-emoji";
+  font-size: 1rem;
+  grid-area: resource;
 }
 
 .name-tile {
-  order: 3;
+  text-wrap: nowrap;
+  grid-area: name-tile;
 }
 
 .terrain {
-  order: 5;
-  font-family: noto-emoji;
+  font-family: "noto-emoji";
+  font-size: 1rem;
+  grid-area: terrain;
 }
 
 .state {
-  order: 7;
+  grid-area: state;
 }
 
 .other-info {
-  order: 9;
+  grid-area: info;
 }
 
 .war-zone:nth-child(1) {
-  order: 2;
+  grid-area: north;
 }
 .war-zone:nth-child(2) {
-  order: 4;
+  grid-area: west;
 }
 .war-zone:nth-child(3) {
-  order: 6;
+  grid-area: south;
 }
 .war-zone:nth-child(4) {
-  order: 8;
+  grid-area: east;
+}
+
+.tile {
+  grid-template-areas:
+    "resource north name-tile"
+    "east terrain west"
+    "state south info";
+}
+
+.red-castle {
+  background-color: var(--color-castle-red);
+}
+
+.green-castle {
+  background-color: var(--color-castle-green);
+}
+
+.blue-castle {
+  background-color: var(--color-castle-blue);
+}
+
+.yellow-castle {
+  background-color: var(--color-castle-yellow);
+}
+
+.zone-neutral {
+  background-color: var(--color-neutral-zone);
+}
+
+/* Añadir al final */
+.tile:hover {
+  transform: scale(1.05);
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --tile-size: 15vw;
+  }
+  .tile {
+    font-size: 0.8em;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --tile-size: 20vw;
+    --gap-size: 1px;
+  }
 }
